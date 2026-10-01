@@ -1,0 +1,75 @@
+<div class="admin-page-head">
+  <div>
+    <h1>Orders</h1>
+    <p class="muted">Track and update every customer order</p>
+  </div>
+</div>
+
+@if (message()) {
+  <div class="alert alert-success"><app-icon name="check" [size]="18" /> {{ message() }}</div>
+}
+@if (error()) {
+  <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+}
+
+<div class="tabs">
+  <button class="tab" [class.active]="filter() === 'ALL'" (click)="filter.set('ALL')">All <span>{{ countFor('ALL') }}</span></button>
+  @for (s of statuses; track s) {
+    <button class="tab" [class.active]="filter() === s" (click)="filter.set(s)">{{ s }} <span>{{ countFor(s) }}</span></button>
+  }
+</div>
+
+<div class="panel">
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Order</th><th>Customer ID</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (o of filtered(); track o.id) {
+          <tr>
+            <td><strong>#{{ o.id }}</strong></td>
+            <td>User {{ o.userId }}</td>
+            <td>{{ o.orderDate | date: 'd MMM y, h:mm a' }}</td>
+            <td>{{ o.items.length }}</td>
+            <td><strong>{{ o.totalAmount | currency: 'INR' : 'symbol' : '1.0-0' }}</strong></td>
+            <td>
+              <select [class]="'status-select status-' + o.status.toLowerCase()"
+                (change)="changeStatus(o, $any($event.target).value)" [disabled]="o.status === 'CANCELLED'">
+                @for (s of statuses; track s) {
+                  <option [value]="s" [selected]="s === o.status">{{ s }}</option>
+                }
+              </select>
+            </td>
+            <td class="right">
+              <button class="btn btn-ghost btn-sm" (click)="toggle(o.id)">{{ expanded() === o.id ? 'Hide' : 'Details' }}</button>
+            </td>
+          </tr>
+          @if (expanded() === o.id) {
+            <tr class="detail-row">
+              <td colspan="7">
+                <div class="order-detail">
+                  <div>
+                    @for (item of o.items; track item.id) {
+                      <div class="mini-item">
+                        <div class="mini-thumb"><app-product-image [src]="item.product.imageUrl" [name]="item.product.name" /></div>
+                        <div class="mini-info"><strong>{{ item.product.name }}</strong><small>Qty {{ item.quantity }} × {{ item.price | currency: 'INR' : 'symbol' : '1.0-0' }}</small></div>
+                        <span>{{ item.price * item.quantity | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+                      </div>
+                    }
+                  </div>
+                  <div class="ship-box">
+                    <small class="muted">Shipping address</small>
+                    <p>{{ o.shippingAddress }}</p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        } @empty {
+          <tr><td colspan="7" class="center muted pad">No orders here</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

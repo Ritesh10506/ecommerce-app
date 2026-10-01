@@ -1,8 +1,10 @@
 package com.hcl.e_comerce.controller;
-import jakarta.validation.Valid;
+
 import com.hcl.e_comerce.entity.Product;
 import com.hcl.e_comerce.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -38,6 +40,11 @@ public class ProductController {
     @GetMapping("/search")
     public List<Product> searchProducts(@RequestParam String name) {
         return productService.searchProducts(name);
+    }
+
+    @PutMapping("/{id}")
+    public Product updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
+        return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")

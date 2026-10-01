@@ -1,0 +1,54 @@
+<div class="container page">
+  <a routerLink="/products" class="back-link"><app-icon name="arrowLeft" [size]="18" /> Back to shop</a>
+
+  @if (loading()) {
+    <div class="detail-card skeleton-detail"></div>
+  } @else if (error()) {
+    <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+  } @else if (product(); as p) {
+    <div class="detail-card">
+      <div class="detail-media">
+        <app-product-image [src]="p.imageUrl" [name]="p.name" />
+      </div>
+
+      <div class="detail-info">
+        <span class="product-cat">{{ p.category.name }}</span>
+        <h1>{{ p.name }}</h1>
+        <div class="detail-price">{{ p.price | currency: 'INR' : 'symbol' : '1.0-0' }}</div>
+        <p class="detail-desc">{{ p.description || 'No description available for this product.' }}</p>
+
+        <div class="detail-meta">
+          @if (p.stock > 0) {
+            <span class="badge badge-green"><app-icon name="check" [size]="14" /> In stock · {{ p.stock }} available</span>
+          } @else {
+            <span class="badge badge-red">Out of stock</span>
+          }
+          <span class="badge badge-gray"><app-icon name="truck" [size]="14" /> Free delivery</span>
+        </div>
+
+        @if (p.stock > 0 && !auth.isAdmin()) {
+          <div class="qty-row">
+            <span class="muted">Quantity</span>
+            <div class="qty">
+              <button (click)="changeQty(-1)" [disabled]="quantity() <= 1">−</button>
+              <span>{{ quantity() }}</span>
+              <button (click)="changeQty(1)" [disabled]="quantity() >= p.stock">+</button>
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn btn-primary btn-lg" (click)="addToCart()"><app-icon name="cart" [size]="18" /> Add to cart</button>
+            <button class="btn btn-dark btn-lg" (click)="addToCart(true)">Buy now</button>
+          </div>
+        }
+
+        @if (message()) {
+          <div class="alert" [class.alert-success]="messageType() === 'success'" [class.alert-error]="messageType() === 'error'">
+            {{ message() }}
+            @if (messageType() === 'success') { · <a routerLink="/cart">View cart</a> }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

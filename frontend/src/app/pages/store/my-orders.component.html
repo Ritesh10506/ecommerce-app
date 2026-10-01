@@ -1,0 +1,73 @@
+<div class="container page">
+  <div class="page-head">
+    <h1>My orders</h1>
+    <span class="muted">{{ orders().length }} order(s)</span>
+  </div>
+
+  @if (placed()) {
+    <div class="success-banner">
+      <div class="success-icon"><app-icon name="check" [size]="26" /></div>
+      <div>
+        <strong>Order #{{ placed() }} placed successfully!</strong>
+        <p>Thank you for shopping with us. You can track its status below.</p>
+      </div>
+    </div>
+  }
+  @if (error()) {
+    <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Loading orders…</p>
+  } @else if (orders().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon"><app-icon name="orders" [size]="32" /></div>
+      <h3>No orders yet</h3>
+      <p class="muted">When you place an order, it will show up here.</p>
+      <a routerLink="/products" class="btn btn-primary">Start shopping</a>
+    </div>
+  } @else {
+    @for (o of orders(); track o.id) {
+      <div class="panel order-card">
+        <div class="order-top">
+          <div>
+            <strong>Order #{{ o.id }}</strong>
+            <span class="muted small"> · Placed on {{ o.orderDate | date: 'd MMM y, h:mm a' }}</span>
+          </div>
+          <span [class]="'status status-' + o.status.toLowerCase()">{{ o.status }}</span>
+        </div>
+
+        @if (o.status !== 'CANCELLED') {
+          <div class="tracker">
+            @for (s of steps; track s; let i = $index) {
+              <div class="track-step" [class.done]="i <= stepIndex(o.status)">
+                <span class="dot"></span>
+                <small>{{ s }}</small>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="order-items">
+          @for (item of o.items; track item.id) {
+            <div class="mini-item">
+              <div class="mini-thumb"><app-product-image [src]="item.product.imageUrl" [name]="item.product.name" /></div>
+              <div class="mini-info"><strong>{{ item.product.name }}</strong><small>Qty {{ item.quantity }} × {{ item.price | currency: 'INR' : 'symbol' : '1.0-0' }}</small></div>
+              <span>{{ item.price * item.quantity | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="order-bottom">
+          <span class="muted small"><app-icon name="truck" [size]="14" /> {{ o.shippingAddress }}</span>
+          <div class="order-bottom-right">
+            <strong class="order-total">{{ o.totalAmount | currency: 'INR' : 'symbol' : '1.0-0' }}</strong>
+            @if (canCancel(o)) {
+              <button class="btn btn-danger-outline btn-sm" (click)="cancel(o)">Cancel order</button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

@@ -17,6 +17,7 @@ public class Product {
     private String name;
 
     @Size(max = 1000, message = "Description can be max 1000 characters")
+    @Column(length = 1000)
     private String description;
 
     @NotNull(message = "Price is required")
@@ -28,6 +29,8 @@ public class Product {
     @PositiveOrZero(message = "Stock cannot be negative")
     private Integer stock;
 
+    @Size(max = 1000, message = "Image URL can be max 1000 characters")
+    @Column(length = 1000)
     private String imageUrl;
 
     @NotNull(message = "Category is required")

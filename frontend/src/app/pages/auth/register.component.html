@@ -1,0 +1,57 @@
+<div class="auth-page">
+  <section class="auth-visual alt">
+    <a routerLink="/products" class="logo light">
+      <span class="logo-mark"><app-icon name="cart" [size]="18" /></span>
+      <span class="logo-text">Shop<em>Easy</em></span>
+    </a>
+    <div class="auth-visual-text">
+      <h1>Join thousands of<br />happy shoppers.</h1>
+      <p>Create a free account to start adding products to your cart.</p>
+      <ul>
+        <li><app-icon name="check" [size]="18" /> Free to sign up</li>
+        <li><app-icon name="check" [size]="18" /> Save your cart across devices</li>
+        <li><app-icon name="check" [size]="18" /> Track every order in one place</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="auth-form-side">
+    <div class="auth-box">
+      <h2>Create your account</h2>
+      <p class="muted">It takes less than a minute.</p>
+
+      <form (ngSubmit)="submit()" #f="ngForm">
+        <label class="field">
+          <span>Full name</span>
+          <input type="text" name="name" [(ngModel)]="name" required minlength="2" placeholder="Ritesh Singh" />
+        </label>
+
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" [(ngModel)]="email" required email placeholder="you@example.com" />
+        </label>
+
+        <div class="two-col">
+          <label class="field">
+            <span>Password</span>
+            <input type="password" name="password" [(ngModel)]="password" required minlength="6" placeholder="Min 6 characters" />
+          </label>
+          <label class="field">
+            <span>Confirm password</span>
+            <input type="password" name="confirm" [(ngModel)]="confirm" required placeholder="Repeat password" />
+          </label>
+        </div>
+
+        @if (error()) {
+          <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+        }
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="loading() || f.invalid">
+          {{ loading() ? 'Creating account…' : 'Create account' }}
+        </button>
+      </form>
+
+      <p class="center muted">Already have an account? <a routerLink="/login">Log in</a></p>
+    </div>
+  </section>
+</div>

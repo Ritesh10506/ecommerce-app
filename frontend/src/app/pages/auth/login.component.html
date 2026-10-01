@@ -1,0 +1,56 @@
+<div class="auth-page">
+  <section class="auth-visual">
+    <a routerLink="/products" class="logo light">
+      <span class="logo-mark"><app-icon name="cart" [size]="18" /></span>
+      <span class="logo-text">Shop<em>Easy</em></span>
+    </a>
+    <div class="auth-visual-text">
+      <h1>Everything you love,<br />delivered to your door.</h1>
+      <p>Log in to track orders, manage your cart and check out in seconds.</p>
+      <ul>
+        <li><app-icon name="truck" [size]="18" /> Fast delivery across India</li>
+        <li><app-icon name="shield" [size]="18" /> Secure JWT-protected account</li>
+        <li><app-icon name="refresh" [size]="18" /> Cancel anytime before shipping</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="auth-form-side">
+    <div class="auth-box">
+      <h2>Welcome back</h2>
+      <p class="muted">Please enter your details to log in.</p>
+
+      <form (ngSubmit)="submit()" #f="ngForm">
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" [(ngModel)]="email" required email placeholder="you@example.com" />
+        </label>
+
+        <label class="field">
+          <span>Password</span>
+          <div class="input-with-btn">
+            <input [type]="showPassword() ? 'text' : 'password'" name="password" [(ngModel)]="password" required placeholder="••••••••" />
+            <button type="button" class="link-btn" (click)="showPassword.set(!showPassword())">
+              {{ showPassword() ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+        </label>
+
+        @if (error()) {
+          <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+        }
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="loading() || f.invalid">
+          {{ loading() ? 'Logging in…' : 'Log in' }}
+        </button>
+      </form>
+
+      <div class="demo-box">
+        <span class="muted small">Demo admin account</span>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="fillDemo('admin')">Use admin&#64;shop.com</button>
+      </div>
+
+      <p class="center muted">Don't have an account? <a routerLink="/register">Sign up free</a></p>
+    </div>
+  </section>
+</div>

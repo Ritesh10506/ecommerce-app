@@ -1,0 +1,37 @@
+<div class="admin-page-head">
+  <div>
+    <h1>Categories</h1>
+    <p class="muted">Group your products so customers can find them easily</p>
+  </div>
+</div>
+
+@if (message()) {
+  <div class="alert alert-success"><app-icon name="check" [size]="18" /> {{ message() }}</div>
+}
+@if (error()) {
+  <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+}
+
+<div class="cat-layout">
+  <form class="panel" (ngSubmit)="add()" #cf="ngForm">
+    <h3>New category</h3>
+    <label class="field"><span>Name</span><input name="name" [(ngModel)]="name" required placeholder="e.g. Electronics" /></label>
+    <label class="field"><span>Description</span><textarea name="description" rows="3" [(ngModel)]="description" placeholder="Optional"></textarea></label>
+    <button class="btn btn-primary btn-block" [disabled]="cf.invalid || saving()">
+      <app-icon name="plus" [size]="18" /> {{ saving() ? 'Saving…' : 'Create category' }}
+    </button>
+  </form>
+
+  <div class="cat-grid">
+    @for (c of categories(); track c.id) {
+      <div class="cat-card">
+        <div class="cat-icon"><app-icon name="tag" [size]="22" /></div>
+        <h4>{{ c.name }}</h4>
+        <p class="muted small">{{ c.description || 'No description' }}</p>
+        <span class="badge badge-gray">{{ countFor(c.id) }} product(s)</span>
+      </div>
+    } @empty {
+      <div class="panel muted">No categories yet. Create your first one.</div>
+    }
+  </div>
+</div>

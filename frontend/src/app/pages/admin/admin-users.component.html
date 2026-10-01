@@ -1,0 +1,50 @@
+<div class="admin-page-head">
+  <div>
+    <h1>Users</h1>
+    <p class="muted">{{ users().length }} registered accounts</p>
+  </div>
+</div>
+
+@if (message()) {
+  <div class="alert alert-success"><app-icon name="check" [size]="18" /> {{ message() }}</div>
+}
+@if (error()) {
+  <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+}
+
+<div class="panel">
+  <div class="toolbar">
+    <div class="search-box">
+      <app-icon name="search" [size]="18" />
+      <input placeholder="Search by name or email…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>User</th><th>Email</th><th>Role</th><th class="right">Actions</th></tr></thead>
+      <tbody>
+        @for (u of filtered(); track u.id) {
+          <tr>
+            <td>
+              <div class="cell-product">
+                <div class="avatar sm">{{ u.name.charAt(0).toUpperCase() }}</div>
+                <div><strong>{{ u.name }}</strong><small class="muted">#{{ u.id }}</small></div>
+              </div>
+            </td>
+            <td>{{ u.email }}</td>
+            <td>
+              <span [class]="u.role === 'ADMIN' ? 'badge badge-indigo' : 'badge badge-gray'">{{ u.role }}</span>
+            </td>
+            <td class="right">
+              @if (u.role !== 'ADMIN') {
+                <button class="icon-btn danger" (click)="remove(u)" title="Delete user"><app-icon name="trash" [size]="18" /></button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4" class="center muted pad">No users found</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

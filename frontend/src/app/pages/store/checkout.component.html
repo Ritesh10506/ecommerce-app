@@ -1,0 +1,66 @@
+<div class="container page">
+  <a routerLink="/cart" class="back-link"><app-icon name="arrowLeft" [size]="18" /> Back to cart</a>
+  <h1>Checkout</h1>
+
+  @if (cart(); as c) {
+    @if (c.items.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon"><app-icon name="cart" [size]="32" /></div>
+        <h3>Your cart is empty</h3>
+        <a routerLink="/products" class="btn btn-primary">Browse products</a>
+      </div>
+    } @else {
+      <form class="cart-layout" (ngSubmit)="placeOrder()" #f="ngForm">
+        <div class="panel">
+          <h3 class="step-title"><span class="step">1</span> Delivery address</h3>
+          <div class="two-col">
+            <label class="field"><span>Full name</span><input name="fullName" [(ngModel)]="fullName" required /></label>
+            <label class="field"><span>Phone</span><input name="phone" [(ngModel)]="phone" required pattern="[0-9]{10}" placeholder="10-digit mobile" /></label>
+          </div>
+          <label class="field"><span>House no. & street</span><input name="street" [(ngModel)]="street" required placeholder="Flat 12, MG Road" /></label>
+          <div class="three-col">
+            <label class="field"><span>City</span><input name="city" [(ngModel)]="city" required placeholder="Ghaziabad" /></label>
+            <label class="field"><span>State</span><input name="state" [(ngModel)]="state" required placeholder="Uttar Pradesh" /></label>
+            <label class="field"><span>PIN code</span><input name="pincode" [(ngModel)]="pincode" required pattern="[0-9]{6}" placeholder="201009" /></label>
+          </div>
+
+          <h3 class="step-title"><span class="step">2</span> Payment method</h3>
+          <label class="radio-card" [class.selected]="payment === 'COD'">
+            <input type="radio" name="payment" value="COD" [(ngModel)]="payment" />
+            <div><strong>Cash on delivery</strong><small>Pay when your order arrives</small></div>
+          </label>
+          <label class="radio-card disabled">
+            <input type="radio" name="payment" value="ONLINE" disabled />
+            <div><strong>UPI / Card</strong><small>Coming soon</small></div>
+          </label>
+        </div>
+
+        <aside class="panel summary">
+          <h3>Your order</h3>
+          @for (item of c.items; track item.id) {
+            <div class="mini-item">
+              <div class="mini-thumb"><app-product-image [src]="item.product.imageUrl" [name]="item.product.name" /></div>
+              <div class="mini-info"><strong>{{ item.product.name }}</strong><small>Qty {{ item.quantity }}</small></div>
+              <span>{{ item.product.price * item.quantity | currency: 'INR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
+          <div class="sum-row"><span>Delivery</span><span class="green">FREE</span></div>
+          <div class="sum-row total"><span>Total</span><span>{{ c.totalAmount | currency: 'INR' : 'symbol' : '1.0-0' }}</span></div>
+
+          @if (error()) {
+            <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+          }
+
+          <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="placing() || f.invalid">
+            {{ placing() ? 'Placing order…' : 'Place order' }}
+          </button>
+          <p class="muted small center">By placing the order you agree to our terms.</p>
+        </aside>
+      </form>
+    }
+  } @else if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  } @else {
+    <p class="muted">Loading…</p>
+  }
+</div>

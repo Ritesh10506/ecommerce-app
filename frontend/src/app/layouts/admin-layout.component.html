@@ -1,0 +1,52 @@
+<div class="admin-shell">
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <div class="sidebar-brand">
+      <span class="logo-mark"><app-icon name="cart" [size]="18" /></span>
+      <div>
+        <strong>ShopEasy</strong>
+        <small>Admin panel</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" (click)="sidebarOpen.set(false)">
+      @for (l of links; track l.path) {
+        <a [routerLink]="l.path" routerLinkActive="active">
+          <app-icon [name]="l.icon" [size]="19" /> {{ l.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-foot">
+      <a routerLink="/products" class="sidebar-store">
+        <app-icon name="store" [size]="18" /> View store
+      </a>
+      <button class="sidebar-logout" (click)="auth.logout()">
+        <app-icon name="logout" [size]="18" /> Logout
+      </button>
+    </div>
+  </aside>
+
+  @if (sidebarOpen()) {
+    <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
+  }
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="icon-btn mobile-only" (click)="sidebarOpen.set(true)" aria-label="Open menu">
+        <app-icon name="menu" />
+      </button>
+      <div class="topbar-title">Welcome back, {{ auth.currentUser()?.name }} 👋</div>
+      <div class="topbar-user">
+        <div class="avatar">{{ auth.currentUser()?.name?.charAt(0)?.toUpperCase() }}</div>
+        <div class="topbar-user-text">
+          <strong>{{ auth.currentUser()?.name }}</strong>
+          <small>{{ auth.currentUser()?.email }}</small>
+        </div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <router-outlet />
+    </div>
+  </div>
+</div>

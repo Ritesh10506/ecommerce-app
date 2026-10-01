@@ -1,0 +1,79 @@
+<header class="store-nav">
+  <div class="container nav-row">
+    <a routerLink="/products" class="logo">
+      <span class="logo-mark"><app-icon name="cart" [size]="18" /></span>
+      <span class="logo-text">Shop<em>Easy</em></span>
+    </a>
+
+    <form class="nav-search" (ngSubmit)="doSearch()">
+      <app-icon name="search" [size]="18" />
+      <input name="q" [(ngModel)]="search" placeholder="Search for products, brands and more" />
+    </form>
+
+    <button class="icon-btn mobile-only" (click)="menuOpen.set(!menuOpen())" aria-label="Menu">
+      <app-icon [name]="menuOpen() ? 'x' : 'menu'" />
+    </button>
+
+    <nav class="nav-actions" [class.open]="menuOpen()" (click)="menuOpen.set(false)">
+      <a routerLink="/products" routerLinkActive="active" class="nav-link">
+        <app-icon name="store" [size]="18" /> Shop
+      </a>
+
+      @if (auth.isLoggedIn()) {
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" class="btn btn-dark btn-sm">
+            <app-icon name="shield" [size]="16" /> Admin panel
+          </a>
+        } @else {
+          <a routerLink="/orders" routerLinkActive="active" class="nav-link">
+            <app-icon name="orders" [size]="18" /> Orders
+          </a>
+          <a routerLink="/cart" routerLinkActive="active" class="nav-link cart-link">
+            <app-icon name="cart" [size]="18" /> Cart
+            @if (cart.count() > 0) {
+              <span class="cart-badge">{{ cart.count() }}</span>
+            }
+          </a>
+        }
+        <div class="avatar" [title]="auth.currentUser()?.email">
+          {{ auth.currentUser()?.name?.charAt(0)?.toUpperCase() }}
+        </div>
+        <button class="nav-link plain" (click)="logout()">
+          <app-icon name="logout" [size]="18" /> Logout
+        </button>
+      } @else {
+        <a routerLink="/login" class="nav-link">Login</a>
+        <a routerLink="/register" class="btn btn-primary btn-sm">Sign up</a>
+      }
+    </nav>
+  </div>
+</header>
+
+<main class="store-main">
+  <router-outlet />
+</main>
+
+<footer class="store-footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="logo light">
+        <span class="logo-mark"><app-icon name="cart" [size]="18" /></span>
+        <span class="logo-text">Shop<em>Easy</em></span>
+      </div>
+      <p>Quality products, honest prices and fast delivery across India.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <a routerLink="/products">All products</a>
+      <a routerLink="/cart">Cart</a>
+      <a routerLink="/orders">My orders</a>
+    </div>
+    <div>
+      <h4>Why ShopEasy</h4>
+      <p><app-icon name="truck" [size]="16" /> Fast delivery</p>
+      <p><app-icon name="shield" [size]="16" /> Secure checkout</p>
+      <p><app-icon name="refresh" [size]="16" /> Easy cancellation</p>
+    </div>
+  </div>
+  <div class="container footer-bottom">© {{ year }} ShopEasy · Built with Angular & Spring Boot</div>
+</footer>

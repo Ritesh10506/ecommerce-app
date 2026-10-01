@@ -1,0 +1,113 @@
+<div class="admin-page-head">
+  <div>
+    <h1>Products</h1>
+    <p class="muted">{{ products().length }} products in your catalogue</p>
+  </div>
+  <button class="btn btn-primary" (click)="openAdd()"><app-icon name="plus" [size]="18" /> Add product</button>
+</div>
+
+@if (message()) {
+  <div class="alert alert-success"><app-icon name="check" [size]="18" /> {{ message() }}</div>
+}
+@if (error()) {
+  <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+}
+
+<div class="panel">
+  <div class="toolbar">
+    <div class="search-box">
+      <app-icon name="search" [size]="18" />
+      <input placeholder="Search products…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </div>
+    <select class="select" [ngModel]="categoryFilter()" (ngModelChange)="categoryFilter.set($event)">
+      <option [ngValue]="null">All categories</option>
+      @for (c of categories(); track c.id) {
+        <option [ngValue]="c.id">{{ c.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th class="right">Actions</th></tr>
+      </thead>
+      <tbody>
+        @for (p of filtered(); track p.id) {
+          <tr>
+            <td>
+              <div class="cell-product">
+                <div class="mini-thumb"><app-product-image [src]="p.imageUrl" [name]="p.name" /></div>
+                <div><strong>{{ p.name }}</strong><small class="muted">#{{ p.id }}</small></div>
+              </div>
+            </td>
+            <td><span class="product-cat">{{ p.category.name }}</span></td>
+            <td><strong>{{ p.price | currency: 'INR' : 'symbol' : '1.0-0' }}</strong></td>
+            <td>
+              @if (p.stock === 0) { <span class="badge badge-red">Out of stock</span> }
+              @else if (p.stock <= 5) { <span class="badge badge-amber">{{ p.stock }} low</span> }
+              @else { <span class="badge badge-green">{{ p.stock }} in stock</span> }
+            </td>
+            <td class="right">
+              <button class="icon-btn" (click)="openEdit(p)" title="Edit"><app-icon name="edit" [size]="18" /></button>
+              <button class="icon-btn danger" (click)="remove(p)" title="Delete"><app-icon name="trash" [size]="18" /></button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="center muted pad">No products found</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (modalOpen()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h3>{{ editingId() ? 'Edit product' : 'Add new product' }}</h3>
+        <button class="icon-btn" (click)="closeModal()"><app-icon name="x" /></button>
+      </div>
+
+      <form (ngSubmit)="save()" #pf="ngForm">
+        <div class="modal-body">
+          <div class="modal-preview">
+            <app-product-image [src]="form.imageUrl" [name]="form.name || '?'" />
+          </div>
+          <div class="modal-fields">
+            <label class="field"><span>Product name</span><input name="name" [(ngModel)]="form.name" required placeholder="e.g. Alphonso Mango" /></label>
+            <label class="field"><span>Description</span><textarea name="description" rows="3" [(ngModel)]="form.description" placeholder="Short description"></textarea></label>
+            <div class="two-col">
+              <label class="field"><span>Price (₹)</span><input type="number" name="price" min="1" [(ngModel)]="form.price" required /></label>
+              <label class="field"><span>Stock</span><input type="number" name="stock" min="0" [(ngModel)]="form.stock" required /></label>
+            </div>
+            <label class="field">
+              <span>Category</span>
+              <select name="categoryId" [(ngModel)]="form.categoryId" required>
+                <option [ngValue]="null" disabled>Select a category</option>
+                @for (c of categories(); track c.id) {
+                  <option [ngValue]="c.id">{{ c.name }}</option>
+                }
+              </select>
+              @if (categories().length === 0) {
+                <small class="muted">No categories yet — <a routerLink="/admin/categories">create one first</a>.</small>
+              }
+            </label>
+            <label class="field"><span>Image URL</span><input name="imageUrl" [(ngModel)]="form.imageUrl" placeholder="https://… (direct image link)" /></label>
+          </div>
+        </div>
+
+        @if (formError()) {
+          <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ formError() }}</div>
+        }
+
+        <div class="modal-foot">
+          <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="pf.invalid || saving()">
+            {{ saving() ? 'Saving…' : (editingId() ? 'Save changes' : 'Add product') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

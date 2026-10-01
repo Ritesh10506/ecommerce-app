@@ -1,0 +1,89 @@
+<div class="admin-page-head">
+  <div>
+    <h1>Dashboard</h1>
+    <p class="muted">Overview of your store's performance</p>
+  </div>
+  <a routerLink="/admin/products" class="btn btn-primary"><app-icon name="plus" [size]="18" /> Add product</a>
+</div>
+
+@if (error()) {
+  <div class="alert alert-error"><app-icon name="alert" [size]="18" /> {{ error() }}</div>
+}
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-icon indigo"><app-icon name="rupee" /></div>
+    <div><span>Total revenue</span><strong>{{ revenue() | currency: 'INR' : 'symbol' : '1.0-0' }}</strong></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon pink"><app-icon name="orders" /></div>
+    <div><span>Total orders</span><strong>{{ orders().length }}</strong><small>{{ pendingCount() }} pending</small></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon amber"><app-icon name="box" /></div>
+    <div><span>Products</span><strong>{{ products().length }}</strong><small>{{ categories().length }} categories</small></div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon green"><app-icon name="users" /></div>
+    <div><span>Customers</span><strong>{{ customers() }}</strong></div>
+  </div>
+</div>
+
+<div class="dash-grid">
+  <section class="panel">
+    <div class="panel-head">
+      <h3>Recent orders</h3>
+      <a routerLink="/admin/orders" class="small">View all</a>
+    </div>
+    @if (recentOrders().length === 0) {
+      <p class="muted">No orders yet.</p>
+    } @else {
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody>
+            @for (o of recentOrders(); track o.id) {
+              <tr>
+                <td><strong>#{{ o.id }}</strong></td>
+                <td>{{ o.orderDate | date: 'd MMM, h:mm a' }}</td>
+                <td>{{ o.items.length }}</td>
+                <td>{{ o.totalAmount | currency: 'INR' : 'symbol' : '1.0-0' }}</td>
+                <td><span [class]="'status status-' + o.status.toLowerCase()">{{ o.status }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <div class="dash-side">
+    <section class="panel">
+      <h3>Orders by status</h3>
+      @for (s of statusBreakdown(); track s.status) {
+        <div class="bar-row">
+          <div class="bar-label"><span>{{ s.status }}</span><span class="muted">{{ s.count }}</span></div>
+          <div class="bar"><div [class]="'bar-fill fill-' + s.status.toLowerCase()" [style.width.%]="s.percent"></div></div>
+        </div>
+      }
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h3>Low stock</h3>
+        <a routerLink="/admin/products" class="small">Manage</a>
+      </div>
+      @if (lowStock().length === 0) {
+        <p class="muted small">All products are well stocked 🎉</p>
+      } @else {
+        @for (p of lowStock(); track p.id) {
+          <div class="mini-item">
+            <div class="mini-thumb"><app-product-image [src]="p.imageUrl" [name]="p.name" /></div>
+            <div class="mini-info"><strong>{{ p.name }}</strong><small>{{ p.category.name }}</small></div>
+            <span [class]="p.stock === 0 ? 'badge badge-red' : 'badge badge-amber'">{{ p.stock }} left</span>
+          </div>
+        }
+      }
+    </section>
+  </div>
+</div>

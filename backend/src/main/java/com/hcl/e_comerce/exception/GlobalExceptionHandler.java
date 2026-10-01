@@ -73,10 +73,19 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Invalid JSON request body", request);
     }
 
-    // 409 - duplicate value (e.g. same category name twice)
+    // 409 - duplicate value, data too long, or record still in use
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicate(DataIntegrityViolationException ex, HttpServletRequest request) {
-        return build(HttpStatus.CONFLICT, "Duplicate or invalid data", request);
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        String cause = String.valueOf(ex.getMostSpecificCause().getMessage());
+        String message = "Duplicate or invalid data";
+        if (cause.contains("Duplicate entry")) {
+            message = "This value already exists";
+        } else if (cause.contains("Data too long")) {
+            message = "One of the fields is too long";
+        } else if (cause.contains("foreign key constraint")) {
+            message = "This record is used by other data (for example orders) and cannot be deleted";
+        }
+        return build(HttpStatus.CONFLICT, message, request);
     }
 
     // 500 - anything else

@@ -45,6 +45,21 @@ public class ProductService {
         return productRepository.findByNameContainingIgnoreCase(name);
     }
 
+    public Product updateProduct(Long id, Product updated) {
+        Product product = getProductById(id);   // 404 if not found
+
+        product.setName(updated.getName());
+        product.setDescription(updated.getDescription());
+        product.setPrice(updated.getPrice());
+        product.setStock(updated.getStock());
+        product.setImageUrl(updated.getImageUrl());
+
+        if (updated.getCategory() != null && updated.getCategory().getId() != null) {
+            product.setCategory(categoryService.getCategoryById(updated.getCategory().getId()));
+        }
+        return productRepository.save(product);
+    }
+
     public void deleteProduct(Long id) {
         getProductById(id);
         productRepository.deleteById(id);
