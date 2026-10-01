@@ -26,7 +26,7 @@ export class ProductImageComponent {
   failed = signal(false);
 
   bg() {
-    const colors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ef4444'];
+    const colors = ['#f97316', '#22c55e', '#ef4444', '#78716c', '#ea580c', '#16a34a', '#dc2626'];
     const code = this.name().charCodeAt(0) || 0;
     const c = colors[code % colors.length];
     return `linear-gradient(135deg, ${c}, ${c}cc)`;
