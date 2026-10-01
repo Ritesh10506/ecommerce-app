@@ -6,7 +6,7 @@
   --primary: #f97316;      /* orange  - buttons, links, highlights */
   --primary-600: #ea580c;  /* darker orange - hover / gradients */
   --primary-50: #fff7ed;   /* very light orange - soft backgrounds */
-  --accent: #22c55npm starte;       /* green   - success accents */
+  --accent: #22c55e;       /* green   - success accents */
   --green: #22c55e;        /* green   - success / in stock */
   --red: #ef4444;          /* red     - errors / delete */
   --muted: #78716c;        /* neutral grey - secondary text */
@@ -437,4 +437,12 @@ input.ng-invalid.ng-touched, textarea.ng-invalid.ng-touched, select.ng-invalid.n
 @media (max-width: 520px) {
   .kpi-grid { grid-template-columns: 1fr; }
   .tracker small { font-size: 0.6rem; }
+}
+/* Smaller hero collage on phones */
+@media (max-width: 860px) {
+  .hero-visual { height: 250px; max-width: 360px; margin: 8px auto 0; }
+  .hero-card { width: 140px; border-radius: 18px; }
+  .hero-card span { font-size: 0.78rem; padding: 7px 10px; }
+  .hc-2 { top: 24px; }
+  .hc-3 { left: 28%; }
 }
